@@ -58,6 +58,7 @@ const createProyect = function (req, res, next) {
     city,
     proyectDescription,
     discipline,
+    owner,
   })
     .then((proyect) => {
       res.send({ proyect });

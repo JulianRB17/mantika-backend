@@ -10,7 +10,6 @@ if (process.env.NODE_ENV !== "production") {
 
 module.exports = async (req, res, next) => {
   const { authorization } = req.headers;
-
   const error = function () {
     res.status(403).send({ message: "Se requiere autorización" });
   };

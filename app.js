@@ -60,11 +60,11 @@ app.post(
   }),
   createUser
 );
-app.post("/signin", login);
+app.post("/login", login);
 
 app.use(auth);
 
-app.use("/cards", proyectsRoute);
+app.use("/proyects", proyectsRoute);
 app.use("/users", usersRoute);
 
 app.use(errorLogger);

@@ -7,9 +7,9 @@ let JWT_SECRET;
 
 if (process.env.NODE_ENV !== "production") {
   JWT_SECRET = process.env.JWT_SECRET;
-} else {
-  JWT_SECRET = "secreto";
 }
+
+console.log(JWT_SECRET);
 
 const error400 = function (err) {
   err.message = "Se pasaron datos inválidos";
@@ -59,7 +59,6 @@ const createUser = async function (req, res, next) {
   try {
     const { username, description, profilePic, city, email, password } =
       req.body;
-    console.log(req.body);
     const hash = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       username,
@@ -69,12 +68,13 @@ const createUser = async function (req, res, next) {
       email,
       password: hash,
     });
+    console.log(JWT_SECRET);
     const token = jwt.sign({ _id: newUser._id }, JWT_SECRET, {
       expiresIn: "7d",
     });
     res.send({ token });
   } catch (err) {
-    if (err.code === 11000) {
+    if (err.code === 401) {
       error401(err, "Ya existe un usuario con este email");
     }
     if (err.name === "ValidationError") {
@@ -128,6 +128,31 @@ const updateUser = function (req, res, next) {
     });
 };
 
+const deleteUser = function (req, res, next) {
+  User.findById(req.params.id)
+    .then((user) => {
+      if (!user) throw new Error("User not found");
+      // if (!user._id.equals(req.user._id)) throw new Error("Usuario no válido");
+      // else {
+      //   return user;
+      // }
+    })
+    .then((user) => User.findOneAndRemove(user))
+    .then((user) => res.send({ user }))
+    .catch((err) => {
+      if (err.name === "CastError") {
+        error404(err);
+      }
+      if (err.message === "Proyect not found") {
+        error404(err);
+      }
+      if (err.message === "Invalid user") {
+        error401(err);
+      }
+      next(err);
+    });
+};
+
 // const updateAvatar = function (req, res, next) {
 //   const { avatar } = req.body;
 //   const userId = req.user._id;
@@ -150,6 +175,7 @@ module.exports = {
   getUsers,
   createUser,
   updateUser,
+  deleteUser,
   // updateAvatar,
   login,
 };
