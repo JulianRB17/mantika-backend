@@ -9,8 +9,6 @@ if (process.env.NODE_ENV !== "production") {
   JWT_SECRET = process.env.JWT_SECRET;
 }
 
-console.log(JWT_SECRET);
-
 const error400 = function (err) {
   err.message = "Se pasaron datos inválidos";
   err.status = 400;
@@ -27,12 +25,13 @@ const error404 = function (err) {
   err.message = "No se ha encontrado ningún usuario con ese ID";
 };
 
-const getUsers = function (req, res, next) {
-  User.find({})
-    .then((users) => res.send({ users }))
-    .catch((err) => {
-      next(err);
-    });
+const getUsers = async function (req, res, next) {
+  try {
+    const users = await User.find({});
+    res.send({ users });
+  } catch (err) {
+    next(err);
+  }
 };
 
 const getUserById = async function (req, res, ext) {
@@ -104,70 +103,84 @@ const login = async function (req, res, next) {
   }
 };
 
-const updateUser = function (req, res, next) {
-  const { name, description, profilePic, city } = req.body;
+const updateUser = async function (req, res, next) {
+  const { username, description, profilePic, city, discipline } = req.body;
   const userId = req.user._id;
-  User.findByIdAndUpdate(
-    userId,
-    {
-      name: name,
-      description: description,
-      profilePic: profilePic,
-      city: city,
-    },
-    { new: true }
-  )
-    .then((user) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        username: username,
+        description: description,
+        profilePic: profilePic,
+        city: city,
+        discipline: discipline,
+      },
+      { new: true }
+    );
+    res.send({ user });
+  } catch (err) {
+    if (err.message === "typeError") {
+      error400(err);
+    }
+    next(err);
+  }
+};
+
+const deleteUser = async function (req, res, next) {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) throw new Error("User not found");
+    if (!user._id.equals(req.user._id)) throw new Error("Usuario no válido");
+    else {
+      User.findOneAndRemove(user);
       res.send({ user });
-    })
-    .catch((err) => {
-      if (err.message === "typeError") {
-        error400(err);
-      }
-      next(err);
-    });
+    }
+  } catch (err) {
+    if (err.name === "CastError") {
+      error404(err);
+    }
+    if (err.message === "Proyect not found") {
+      error404(err);
+    }
+    if (err.message === "Invalid user") {
+      error401(err);
+    }
+    next(err);
+  }
 };
 
-const deleteUser = function (req, res, next) {
-  User.findById(req.params.id)
-    .then((user) => {
-      if (!user) throw new Error("User not found");
-      // if (!user._id.equals(req.user._id)) throw new Error("Usuario no válido");
-      // else {
-      //   return user;
-      // }
-    })
-    .then((user) => User.findOneAndRemove(user))
-    .then((user) => res.send({ user }))
-    .catch((err) => {
-      if (err.name === "CastError") {
-        error404(err);
-      }
-      if (err.message === "Proyect not found") {
-        error404(err);
-      }
-      if (err.message === "Invalid user") {
-        error401(err);
-      }
-      next(err);
-    });
+const userUpdateColaborateIn = async function (req, res, next) {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $addToSet: { colaboratingInProyects: req.params.proyectId } },
+      { new: true }
+    );
+    res.send({ user });
+  } catch (err) {
+    if (err.name === "CastError") {
+      error404(err);
+    }
+    next(err);
+  }
 };
 
-// const updateAvatar = function (req, res, next) {
-//   const { avatar } = req.body;
-//   const userId = req.user._id;
-
-//   User.findByIdAndUpdate(userId, { avatar: avatar }, { new: true })
-//     .then((user) => {
-//       res.send({ user });
-//     })
-//     .catch((err) => {
-//       if (err.message === "TypeError") {
-//         error400(err);
-//       }
-//       next(err);
-//     });
-// };
+const userUpdateCreateProyect = async function (req, res, next) {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $addToSet: { createdProyects: req.params.proyectId } },
+      { new: true }
+    );
+    res.send({ user });
+  } catch (err) {
+    if (err.name === "CastError") {
+      error404(err);
+    }
+    next(err);
+  }
+};
 
 module.exports = {
   getUserById,
@@ -176,6 +189,7 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
-  // updateAvatar,
   login,
+  userUpdateColaborateIn,
+  userUpdateCreateProyect,
 };

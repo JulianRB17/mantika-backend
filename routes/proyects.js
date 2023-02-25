@@ -5,6 +5,9 @@ const {
   getProyects,
   deleteProyect,
   createProyect,
+  editProyect,
+  proyectUpdateColaborators,
+  getProyect,
 } = require("../controllers/proyects");
 
 const urlValidator = function (value, helpers) {
@@ -15,21 +18,23 @@ const urlValidator = function (value, helpers) {
 };
 
 proyectsRoute.get("/", getProyects);
+proyectsRoute.get("/:proyectId", getProyect);
 proyectsRoute.post(
   "/",
   celebrate({
     [Segments.BODY]: Joi.object().keys({
-      proyectPic: Joi.string().required().custom(urlValidator),
-      proyectName: Joi.string().required(),
+      img: Joi.string().required().custom(urlValidator),
+      name: Joi.string().required(),
       city: Joi.string().required(),
-      proyectDescription: Joi.string().required(),
+      description: Joi.string().required(),
       discipline: Joi.string().required(),
     }),
   }),
   createProyect
 );
 proyectsRoute.delete("/:proyectId", deleteProyect);
-// proyectsRoute.put("/likes/:proyectId", likeproyect);
+proyectsRoute.patch("/:proyectId", editProyect);
+proyectsRoute.patch("/colaborate/:proyectId", proyectUpdateColaborators);
 // proyectsRoute.delete("/likes/:proyectId", unlikeproyect);
 proyectsRoute.use(errors());
 

@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
 
 const proyectSchema = new mongoose.Schema({
-  proyectName: {
+  name: {
     type: String,
     minlength: 2,
     maxlength: 30,
     required: true,
   },
-  proyectPic: {},
+  img: {},
   city: {
     type: String,
     minlength: 2,
     maxlength: 30,
     required: true,
   },
-  proyectDescription: {
+  description: {
     type: String,
     minlength: 2,
     maxlength: 200,
@@ -28,7 +28,7 @@ const proyectSchema = new mongoose.Schema({
     type: mongoose.ObjectId,
     required: true,
   },
-  Colaborators: {
+  colaborators: {
     type: [{ type: mongoose.ObjectId }],
     default: [],
   },

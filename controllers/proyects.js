@@ -14,76 +14,119 @@ const error401 = function (err) {
   err.message = "Invalid user";
 };
 
-const getProyects = function (req, res, next) {
-  Proyect.find({})
-    .then((proyects) => res.send({ proyects }))
-    .catch((err) => {
-      next(err);
-    });
+const getProyects = async function (req, res, next) {
+  try {
+    const proyects = await Proyect.find({});
+    res.send({ proyects });
+  } catch (err) {
+    next(err);
+  }
 };
 
-const deleteProyect = function (req, res, next) {
-  Proyect.findById(req.params.proyectId)
-    .then((proyect) => {
-      if (!proyect) throw new Error("Proyect not found");
-      if (!proyect.owner.equals(req.user._id))
-        throw new Error("Usuario no válido");
-      else {
-        return proyect;
-      }
-    })
-    .then((proyect) => Proyect.findOneAndRemove(proyect))
-    .then((proyect) => res.send({ proyect }))
-    .catch((err) => {
-      if (err.name === "CastError") {
-        error404(err);
-      }
-      if (err.message === "Proyect not found") {
-        error404(err);
-      }
-      if (err.message === "Invalid user") {
-        error401(err);
-      }
-      next(err);
-    });
+const getProyect = async function (req, res, next) {
+  try {
+    const id = req.params.proyectId;
+    const proyect = await Proyect.findById(id);
+    res.send({ proyect });
+  } catch (err) {
+    if (err.name === "CastError") {
+      error404(err);
+    }
+    next(err);
+  }
 };
 
-const createProyect = function (req, res, next) {
-  const { proyectName, proyectPic, city, proyectDescription, discipline } =
-    req.body;
-  const owner = req.user._id;
-  Proyect.create({
-    proyectName,
-    proyectPic,
-    city,
-    proyectDescription,
-    discipline,
-    owner,
-  })
-    .then((proyect) => {
+const deleteProyect = async function (req, res, next) {
+  try {
+    const proyect = await Proyect.findById(req.params.proyectId);
+    if (!proyect) throw new Error("Proyect not found");
+    if (!proyect.owner.equals(req.user._id))
+      throw new Error("Usuario no válido");
+    else {
+      Proyect.findOneAndRemove(proyect);
       res.send({ proyect });
-    })
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        error400(err);
-      }
-      next(err);
-    });
+    }
+  } catch (err) {
+    if (err.name === "CastError") {
+      error404(err);
+    }
+    if (err.message === "Proyect not found") {
+      error404(err);
+    }
+    if (err.message === "Invalid user") {
+      error401(err);
+    }
+    next(err);
+  }
 };
 
-// const editProyect = function (req, res, next) {
-//   Card.findByIdAndUpdate(
-//     req.params.cardId,
-//     { $addToSet: { likes: req.user._id } },
-//     { new: true }
-//   )
-//     .then((card) => res.send({ card }))
-//     .catch((err) => {
-//       if (err.name === "CastError") {
-//         error404(err);
-//       }
-//       next(err);
-//     });
-// };
+const createProyect = async function (req, res, next) {
+  const { name, img, city, description, discipline } = req.body;
+  const owner = req.user._id;
+  try {
+    const proyect = await Proyect.create({
+      name,
+      img,
+      city,
+      description,
+      discipline,
+      owner,
+    });
+    res.send({ proyect });
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      error400(err);
+    }
+    next(err);
+  }
+};
 
-module.exports = { getProyects, deleteProyect, createProyect };
+const editProyect = async function (req, res, next) {
+  const { name, description, city, discipline, proyectPic } = req.body;
+  const proyectId = req.params.proyectId;
+
+  try {
+    const proyect = await Proyect.findByIdAndUpdate(
+      proyectId,
+      {
+        name: name,
+        description: description,
+        proyectPic: proyectPic,
+        city: city,
+        discipline: discipline,
+      },
+      { new: true }
+    );
+    res.send({ proyect });
+  } catch (err) {
+    if (err.message === "typeError") {
+      error400(err);
+    }
+    next(err);
+  }
+};
+
+const proyectUpdateColaborators = async function (req, res, next) {
+  try {
+    const proyect = await Proyect.findByIdAndUpdate(
+      req.params.proyectId,
+      { $addToSet: { colaborators: req.user._id } },
+      { new: true }
+    );
+    res.send({ proyect });
+  } catch (err) {
+    if (err.name === "CastError") {
+      error404(err);
+    }
+    next(err);
+  }
+};
+
+module.exports = {
+  getProyects,
+  getProyect,
+  deleteProyect,
+  createProyect,
+  editProyect,
+  proyectUpdateColaborators,
+};

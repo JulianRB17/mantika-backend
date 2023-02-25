@@ -32,6 +32,21 @@ const emailValidator = function (value, helpers) {
   return helpers.error("string.uri");
 };
 
+const celebrateUserMiddleware = function () {
+  return celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      profilePic: Joi.string()
+        .default("https://picsum.photos/200")
+        .custom(urlValidator),
+      email: Joi.string().required().custom(emailValidator),
+      username: Joi.string().required(),
+      password: Joi.string().required(),
+      description: Joi.string().required(),
+      city: Joi.string().required(),
+    }),
+  });
+};
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
@@ -42,24 +57,7 @@ app.get("/crash-test", () => {
   }, 0);
 });
 
-app.post(
-  "/signup",
-  celebrate({
-    [Segments.BODY]: Joi.object().keys({
-      profilePic: Joi.string()
-        .default(
-          "https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg"
-        )
-        .custom(urlValidator),
-      email: Joi.string().required().custom(emailValidator),
-      username: Joi.string().required(),
-      password: Joi.string().required(),
-      description: Joi.string().required(),
-      city: Joi.string().required(),
-    }),
-  }),
-  createUser
-);
+app.post("/signup", celebrateUserMiddleware(), createUser);
 app.post("/login", login);
 
 app.use(auth);
