@@ -12,14 +12,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 2,
     maxlength: 150,
-    required: true,
   },
   profilePic: {},
+  discipline: { type: String, minlength: 2, maxlength: 30 },
   city: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: true,
   },
   email: {
     type: String,

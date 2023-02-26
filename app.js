@@ -11,7 +11,7 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 const auth = require("./middlewares/auth");
 require("dotenv").config();
 
-const { PORT = 3001 } = process.env;
+const { PORT = 3001, API_KEY } = process.env;
 const app = express();
 app.use(cors());
 app.options("*", cors());
@@ -41,8 +41,7 @@ const celebrateUserMiddleware = function () {
       email: Joi.string().required().custom(emailValidator),
       username: Joi.string().required(),
       password: Joi.string().required(),
-      description: Joi.string().required(),
-      city: Joi.string().required(),
+      discipline: Joi.string().required(),
     }),
   });
 };
@@ -59,6 +58,9 @@ app.get("/crash-test", () => {
 
 app.post("/signup", celebrateUserMiddleware(), createUser);
 app.post("/login", login);
+app.get("/apikey", (req, res, next) => {
+  res.send({ API_KEY });
+});
 
 app.use(auth);
 
