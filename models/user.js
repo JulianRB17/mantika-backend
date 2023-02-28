@@ -8,17 +8,11 @@ const userSchema = new mongoose.Schema({
     maxlength: 30,
     required: true,
   },
-  description: {
-    type: String,
-    minlength: 2,
-    maxlength: 150,
-  },
-  profilePic: {},
-  discipline: { type: String, minlength: 2, maxlength: 30 },
-  city: {
+  discipline: {
     type: String,
     minlength: 2,
     maxlength: 30,
+    required: true,
   },
   email: {
     type: String,
@@ -30,13 +24,24 @@ const userSchema = new mongoose.Schema({
     },
     required: true,
   },
-  createdProyects: { type: [{ type: mongoose.ObjectId }], default: [] },
-  colaboratingInProyects: { type: [{ type: mongoose.ObjectId }], default: [] },
   password: {
     type: String,
     required: true,
     select: false,
   },
+  description: {
+    type: String,
+    minlength: 2,
+    maxlength: 150,
+  },
+  profilePic: {},
+  city: {
+    type: String,
+    minlength: 2,
+    maxlength: 30,
+  },
+  createdProyects: { type: [{ type: mongoose.ObjectId }], default: [] },
+  colaboratingInProyects: { type: [{ type: mongoose.ObjectId }], default: [] },
 });
 
 module.exports = mongoose.model("user", userSchema);

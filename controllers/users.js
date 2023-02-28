@@ -34,7 +34,7 @@ const getUsers = async function (req, res, next) {
   }
 };
 
-const getUserById = async function (req, res, ext) {
+const getUserById = async function (req, res, next) {
   try {
     const userId = req.params.userId;
     const currentUser = await User.findById(userId);
@@ -56,18 +56,14 @@ const getCurrentUser = async function (req, res, next) {
 
 const createUser = async function (req, res, next) {
   try {
-    const { username, description, profilePic, city, email, password } =
-      req.body;
+    const { username, email, discipline, password } = req.body;
     const hash = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       username,
-      description,
-      profilePic,
-      city,
       email,
+      discipline,
       password: hash,
     });
-    console.log(JWT_SECRET);
     const token = jwt.sign({ _id: newUser._id }, JWT_SECRET, {
       expiresIn: "7d",
     });

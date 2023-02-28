@@ -62,7 +62,7 @@ app.get("/apikey", (req, res, next) => {
   res.send({ API_KEY });
 });
 
-// app.use(auth);
+app.use(auth);
 
 app.use("/proyects", proyectsRoute);
 app.use("/users", usersRoute);
