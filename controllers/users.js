@@ -106,11 +106,13 @@ const updateUser = async function (req, res, next) {
     const user = await User.findByIdAndUpdate(
       userId,
       {
-        username: username,
-        description: description,
-        profilePic: profilePic,
-        city: city,
-        discipline: discipline,
+        $set: {
+          username: username,
+          description: description,
+          profilePic: profilePic,
+          city: city,
+          discipline: discipline,
+        },
       },
       { new: true }
     );
@@ -129,8 +131,8 @@ const deleteUser = async function (req, res, next) {
     if (!user) throw new Error("User not found");
     if (!user._id.equals(req.user._id)) throw new Error("Usuario no válido");
     else {
-      User.findOneAndRemove(user);
-      res.send({ user });
+      const deletedUser = await User.findOneAndDelete({ _id: req.params.id });
+      res.send({ deletedUser });
     }
   } catch (err) {
     if (err.name === "CastError") {
