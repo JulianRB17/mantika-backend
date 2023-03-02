@@ -122,6 +122,18 @@ const proyectUpdateColaborators = async function (req, res, next) {
   }
 };
 
+const getMyProyects = async function (req, res, next) {
+  try {
+    const proyects = await Proyect.find({ owner: req.user._id });
+    if (proyects) res.send(proyects);
+  } catch (err) {
+    if (err.name === "CastError") {
+      error404(err);
+    }
+    next(err);
+  }
+};
+
 module.exports = {
   getProyects,
   getProyect,
@@ -129,4 +141,5 @@ module.exports = {
   createProyect,
   editProyect,
   proyectUpdateColaborators,
+  getMyProyects,
 };

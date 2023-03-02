@@ -8,6 +8,7 @@ const {
   editProyect,
   proyectUpdateColaborators,
   getProyect,
+  getMyProyects,
 } = require("../controllers/proyects");
 
 const urlValidator = function (value, helpers) {
@@ -18,6 +19,7 @@ const urlValidator = function (value, helpers) {
 };
 
 proyectsRoute.get("/", getProyects);
+proyectsRoute.get("/created", getMyProyects);
 proyectsRoute.get("/:proyectId", getProyect);
 proyectsRoute.post(
   "/",
