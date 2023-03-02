@@ -21,15 +21,15 @@ proyectsRoute.get("/", getProyects);
 proyectsRoute.get("/:proyectId", getProyect);
 proyectsRoute.post(
   "/",
-  celebrate({
-    [Segments.BODY]: Joi.object().keys({
-      img: Joi.string().required().custom(urlValidator),
-      name: Joi.string().required(),
-      city: Joi.string().required(),
-      description: Joi.string().required(),
-      discipline: Joi.string().required(),
-    }),
-  }),
+  // celebrate({
+  //   [Segments.BODY]: Joi.object().keys({
+  //     img: Joi.string().custom(urlValidator),
+  //     name: Joi.string().required(),
+  //     city: Joi.string().required(),
+  //     description: Joi.string().required(),
+  //     discipline: Joi.string().required(),
+  //   }),
+  // }),
   createProyect
 );
 proyectsRoute.delete("/:proyectId", deleteProyect);

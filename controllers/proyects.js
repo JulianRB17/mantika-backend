@@ -17,7 +17,7 @@ const error401 = function (err) {
 const getProyects = async function (req, res, next) {
   try {
     const proyects = await Proyect.find({});
-    res.send({ proyects });
+    res.send(proyects);
   } catch (err) {
     next(err);
   }
@@ -61,11 +61,11 @@ const deleteProyect = async function (req, res, next) {
 };
 
 const createProyect = async function (req, res, next) {
-  const { name, img, city, description, discipline } = req.body;
+  const { proyectName, img, city, description, discipline } = req.body;
   const owner = req.user._id;
   try {
     const proyect = await Proyect.create({
-      name,
+      proyectName,
       img,
       city,
       description,

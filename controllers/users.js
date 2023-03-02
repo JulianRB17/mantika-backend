@@ -152,7 +152,7 @@ const userUpdateColaborateIn = async function (req, res, next) {
   try {
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { $addToSet: { colaboratingInProyects: req.params.proyectId } },
+      { $addToSet: { colaboratingInProyects: req.body.proyectId } },
       { new: true }
     );
     res.send({ user });
@@ -166,9 +166,10 @@ const userUpdateColaborateIn = async function (req, res, next) {
 
 const userUpdateCreateProyect = async function (req, res, next) {
   try {
+    console.log(req.user._id, req.body);
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { $addToSet: { createdProyects: req.params.proyectId } },
+      { $addToSet: { createdProyects: req.body.proyectId } },
       { new: true }
     );
     res.send({ user });

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const proyectSchema = new mongoose.Schema({
-  name: {
+  proyectName: {
     type: String,
     minlength: 2,
     maxlength: 30,
