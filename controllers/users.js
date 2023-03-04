@@ -166,7 +166,6 @@ const userUpdateColaborateIn = async function (req, res, next) {
 
 const userUpdateCreateProyect = async function (req, res, next) {
   try {
-    console.log(req.user._id, req.body);
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { $addToSet: { createdProyects: req.body.proyectId } },
