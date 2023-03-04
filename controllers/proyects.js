@@ -27,7 +27,7 @@ const getProyect = async function (req, res, next) {
   try {
     const id = req.params.proyectId;
     const proyect = await Proyect.findById(id);
-    res.send({ proyect });
+    res.send(proyect);
   } catch (err) {
     if (err.name === "CastError") {
       error404(err);
@@ -43,8 +43,10 @@ const deleteProyect = async function (req, res, next) {
     if (!proyect.owner.equals(req.user._id))
       throw new Error("Usuario no válido");
     else {
-      Proyect.findOneAndRemove(proyect);
-      res.send({ proyect });
+      const deletedProyect = await Proyect.findOneAndDelete({
+        _id: req.params.proyectId,
+      });
+      res.send(deletedProyect);
     }
   } catch (err) {
     if (err.name === "CastError") {
@@ -82,23 +84,31 @@ const createProyect = async function (req, res, next) {
 };
 
 const editProyect = async function (req, res, next) {
-  const { name, description, city, discipline, proyectPic } = req.body;
+  const { proyectName, description, city, discipline, proyectPic } = req.body;
   const proyectId = req.params.proyectId;
 
   try {
     const proyect = await Proyect.findByIdAndUpdate(
       proyectId,
       {
-        name: name,
-        description: description,
-        proyectPic: proyectPic,
-        city: city,
-        discipline: discipline,
+        $set: {
+          proyectName: proyectName,
+          description: description,
+          proyectPic: proyectPic,
+          city: city,
+          discipline: discipline,
+        },
       },
       { new: true }
     );
-    res.send({ proyect });
+    res.send(proyect);
   } catch (err) {
+    if (err.name === "CastError") {
+      error404(err);
+    }
+    if (err.message === "Proyect not found") {
+      error404(err);
+    }
     if (err.message === "typeError") {
       error400(err);
     }
@@ -113,7 +123,7 @@ const proyectUpdateColaborators = async function (req, res, next) {
       { $addToSet: { colaborators: req.user._id } },
       { new: true }
     );
-    res.send({ proyect });
+    res.send(proyect);
   } catch (err) {
     if (err.name === "CastError") {
       error404(err);

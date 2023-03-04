@@ -155,7 +155,7 @@ const userUpdateColaborateIn = async function (req, res, next) {
       { $addToSet: { colaboratingInProyects: req.body.proyectId } },
       { new: true }
     );
-    res.send({ user });
+    res.send(user);
   } catch (err) {
     if (err.name === "CastError") {
       error404(err);
