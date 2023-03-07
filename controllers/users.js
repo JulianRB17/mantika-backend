@@ -37,8 +37,8 @@ const getUsers = async function (req, res, next) {
 const getUserById = async function (req, res, next) {
   try {
     const userId = req.params.userId;
-    const currentUser = await User.findById(userId);
-    res.send({ currentUser });
+    const user = await User.findById(userId);
+    res.send(user);
   } catch (err) {
     next(err);
   }
