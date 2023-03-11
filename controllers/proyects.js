@@ -63,12 +63,12 @@ const deleteProyect = async function (req, res, next) {
 };
 
 const createProyect = async function (req, res, next) {
-  const { proyectName, img, city, description, discipline } = req.body;
+  const { proyectName, proyectPic, city, description, discipline } = req.body;
   const owner = req.user._id;
   try {
     const proyect = await Proyect.create({
       proyectName,
-      img,
+      proyectPic,
       city,
       description,
       discipline,

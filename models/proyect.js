@@ -7,7 +7,12 @@ const proyectSchema = new mongoose.Schema({
     maxlength: 30,
     required: true,
   },
-  img: {},
+  proyectPic: {
+    type: String,
+    minlength: 2,
+    maxlength: 30,
+    required: true,
+  },
   city: {
     type: String,
     minlength: 2,
