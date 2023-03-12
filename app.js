@@ -32,16 +32,25 @@ const emailValidator = function (value, helpers) {
   return helpers.error("string.uri");
 };
 
-const celebrateUserMiddleware = function () {
+const celebrateCreateUserMiddleware = function () {
   return celebrate({
     [Segments.BODY]: Joi.object().keys({
-      profilePic: Joi.string()
-        .default("https://picsum.photos/200")
-        .custom(urlValidator),
+      profilePic: Joi.string().custom(urlValidator),
       email: Joi.string().required().custom(emailValidator),
       username: Joi.string().required(),
       password: Joi.string().required(),
       discipline: Joi.string().required(),
+      description: Joi.string().required(),
+      city: Joi.string().required(),
+    }),
+  });
+};
+
+const celebrateLoginMiddleware = function () {
+  return celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      email: Joi.string().required().custom(emailValidator),
+      password: Joi.string().required(),
     }),
   });
 };
@@ -56,8 +65,8 @@ app.get("/crash-test", () => {
   }, 0);
 });
 
-app.post("/signup", celebrateUserMiddleware(), createUser);
-app.post("/login", login);
+app.post("/signup", celebrateCreateUserMiddleware(), createUser);
+app.post("/login", celebrateLoginMiddleware(), login);
 app.get("/apikey", (req, res, next) => {
   res.send({ API_KEY });
 });

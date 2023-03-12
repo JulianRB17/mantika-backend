@@ -34,7 +34,14 @@ const userSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 150,
   },
-  profilePic: {},
+  profilePic: {
+    type: String,
+    required: true,
+    validate: {
+      validator: validator.isURL,
+      message: (value) => `${value} is not a valid URL`,
+    },
+  },
   city: {
     type: String,
     minlength: 2,

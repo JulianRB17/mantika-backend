@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const proyectSchema = new mongoose.Schema({
   proyectName: {
@@ -9,9 +10,11 @@ const proyectSchema = new mongoose.Schema({
   },
   proyectPic: {
     type: String,
-    minlength: 2,
-    maxlength: 30,
     required: true,
+    validate: {
+      validator: validator.isURL,
+      message: (value) => `${value} is not a valid URL`,
+    },
   },
   city: {
     type: String,
