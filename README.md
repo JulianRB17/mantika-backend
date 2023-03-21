@@ -2,7 +2,7 @@
 
 ## API creada para el proyecto final del bootcamp en web development Practicum de Yandex.
 
-Se puede revisar la página en el siguiente [dominio](http://34.83.49.232:3000/).
+Para revisar el proyecto se debe correr primero el backend con npm run dev, también activar mongod y, finalmente, correr el frontend con npm start.
 
 El frontend de esta API fue desarrollado usando la biblioteca de JavaScript: React, el backend usa Node.js con el framework Express además de MongoDB como base de datos no relacional.
 
@@ -38,8 +38,6 @@ Para usar la web app se requiere una autorización.
 
 ## Frontend endpoints
 
-Se puede acceder a través de http://34.83.49.232:3000/
-
 - `/landing` - Página inicial si el usuario no ha sido loggeado. Contiene botones a '/register' y a '/login'.
 
 - `/about` - Página que tiene un texto acerca del proyecto de la app.
@@ -63,8 +61,6 @@ Se puede acceder a través de http://34.83.49.232:3000/
 - `npm run build` — Para crear el build.
 
 ## Backend directories
-
-El backend está alojado en http://34.83.49.232:3001/
 
 - POST `/signup` - toma en el body de request un JSON con los campos que generarán un nuevo usuario: email, username, password, description, city, discipline y profilePic todos requeridos.
 
