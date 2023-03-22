@@ -4,13 +4,13 @@ const validator = require("validator");
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    minlength: 2,
+    minlength: 3,
     maxlength: 30,
     required: true,
   },
   discipline: {
     type: String,
-    minlength: 2,
+    minlength: 3,
     maxlength: 30,
     required: true,
   },
@@ -36,7 +36,6 @@ const userSchema = new mongoose.Schema({
   },
   profilePic: {
     type: String,
-    required: true,
     validate: {
       validator: validator.isURL,
       message: (value) => `${value} is not a valid URL`,

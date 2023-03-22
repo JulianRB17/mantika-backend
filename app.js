@@ -20,13 +20,6 @@ app.use(helmet());
 
 mongoose.connect("mongodb://127.0.0.1:27017/mantika");
 
-const urlValidator = function (value, helpers) {
-  if (validator.isURL(value)) {
-    return value;
-  }
-  return helpers.error("string.uri");
-};
-
 const emailValidator = function (value, helpers) {
   if (validator.isEmail(value)) {
     return value;
@@ -37,13 +30,10 @@ const emailValidator = function (value, helpers) {
 const celebrateCreateUserMiddleware = function () {
   return celebrate({
     [Segments.BODY]: Joi.object().keys({
-      profilePic: Joi.string().custom(urlValidator),
       email: Joi.string().required().custom(emailValidator),
       username: Joi.string().required(),
       password: Joi.string().required(),
       discipline: Joi.string().required(),
-      description: Joi.string().required(),
-      city: Joi.string().required(),
     }),
   });
 };
